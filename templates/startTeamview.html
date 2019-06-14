@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>{{ context.title }}</title>
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <style type="text/css">
+        html,body{
+            width: 100%;
+            height: 100%;
+            background: url("http://images.vrm.cn/assets/kdlins-newyear2017_20170120/firework.gif")repeat, -webkit-linear-gradient(top,#9370DB,lightblue,white);
+            background-attachment:fixed;
+        }
+    </style>
+
+</head>
+<body>
+    <script type="text/javascript">
+
+    </script>
+    {% include 'menu.html' %}
+
+    <div class="container" style="height: 100%; margin-top: 50px;background-color: rgba(255,251,240,0.7);">
+        <div class="starter-template">
+            <font color="red" size="12" style="text-align: center">{{ context.result }}</font>
+        </div>
+    </div><!-- /.container -->
+
+</body>
+</html>

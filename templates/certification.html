@@ -1,0 +1,485 @@
+<!DOCTYPE html><html lang="en"><head>
+        <script src="https://pingjs.qq.com/h5/stats.js?v2.0.2" name="MTAH5" sid="500596854"></script><script type="text/javascript">
+            var _speedMark = new Date();
+        </script>
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta charset="UTF-8">
+        <meta name="format-detection" content="telephone=no">
+        <title>{{ title }}</title>
+        <!-- weiui.css-->
+        <link rel="stylesheet" type="text/css" href="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/weiui20190330.css?v=1560406450">
+<!--        <link rel="stylesheet" type="text/css" href="http://jiaojing.chegonggong.com/uploads/css/weiui.css">-->
+
+        <!-- example.css-->
+        <link rel="stylesheet" type="text/css" href="https://f.seals.qq.com/filestore/10019/c5/b3/2e/1000/file/TYj2DS11JW_0494522.js?v=1560406450">
+<!--        <link rel="stylesheet" type="text/css" href="http://jiaojing.chegonggong.com/uploads/css/example.css">-->
+
+        <!-- style.css-->
+        <link rel="stylesheet" type="text/css" href="https://f.seals.qq.com/filestore/10019/c5/b3/2e/1000/file/QfYsGHxpfx_9293882.css?v=1560406450">
+<!--        <link rel="stylesheet" type="text/css" href="http://jiaojing.chegonggong.com/uploads/css/style.css">-->
+
+        <!-- jQuery-1.8.3.min.js-->
+        <script type="text/javascript" src="https://f.seals.qq.com/filestore/10019/c5/b3/2e/1000/file/9CaFNbcrn3_7984997.8?v=1560406450"></script><style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style>
+
+        <!-- yanzheng_wx.js-->
+        <script type="text/javascript" src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/yanzheng_wx.js?v=1560406450"></script>
+
+        <!--main.js-->
+        <script type="text/javascript" src="https://f.seals.qq.com/filestore/10019/c5/b3/2e/1000/file/FZmJBIXHKn_8526398.js?v=1560406450"></script>
+        <!--example.js-->
+        <script type="text/javascript" src="https://f.seals.qq.com/filestore/10019/c5/b3/2e/1000/file/TiidZFpz1e_8168153.js?v=1560406450"></script>
+
+        <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+
+
+        <style>
+            #cllb .list .jzmx{
+                background-color:#0093e8;
+            }
+            .weui_btn_primary{
+                background-color:#0093e8;
+            }
+            .weui-btn_primary{
+                background-color:#0093e8;
+            }
+            .weui_btn_primary:not(.weui_btn_disabled):active {
+                color: rgba(255, 255, 255, 0.4);
+                background-color: #0093e8;
+            }
+            .weui-btn_primary:not(.weui_btn_disabled):active {
+                color: rgba(255, 255, 255, 0.4);
+                background-color: #0093e8;
+            }
+            .top{
+                background-color: #0093e8;
+            }
+            .weui_icon_success:before{
+                color: #0093e8;
+            }
+            .weui-vcode-btn{
+                color: #0093e8;
+            }
+            .weui_btn_dialog.primary{
+                color: #0093e8;
+            }
+            .weui_btn_plain_primary{
+                color: #0093e8;
+                border: 1px solid #0093e8;
+            }
+        </style>
+
+
+
+        <script>
+            function showmsg(neirong)
+            {
+                if (neirong == '')
+                {
+                    return false;
+                }
+                $("#error_msg").html(neirong);
+                $("#error_msg").addClass("error_msg");
+                curCount = count;
+                InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一
+            }
+        </script>
+    </head>
+
+    <body ontouchstart="">
+    <div class="msgbox_wrap unhappy_error" id="error_msg"></div>
+        <!--<script type="text/javascript" src="--><!--"></script>-->
+<style>
+#jiazai{width:80px; height:80px;  color:#d9d9d9; z-index:1000;}
+#float_fc{width:100%; height:100%; position:fixed; top:0px; left:0px;z-index:99; }
+#float_fc #jz{width:80px;margin:145px auto 0;color:#fff;text-align:center;background:rgba(0,0,0,0.5); border-radius:5px; padding:7px 10px; font-size:14px; }
+</style>
+
+<script>
+
+
+	/**
+	 * [ajax 通用方法（成功时会调用successFun，失败是显示data.message的错误消息）]
+	 * @author clover <305471598@qq.com>
+	 * @version 2016-10-31
+	 * @param   {[string]}   url  [ajax请求地址]
+	 * @param   {[json]}     data [ajax请求数据]
+	 * @param   {[type]}   successFunc [请求成功时的回调函数]
+	 * @param   {[bool]}   useLoading是否使用了加载浮沉(默认为true)
+	 * @return  {[void]}
+	 */
+
+	subBusy = 1;
+
+	function ajax(url, data, successFunc, useLoading)
+	{
+		if(subBusy == 2){
+			return false;
+		}
+		subBusy = 2;
+
+		useLoading = (typeof(useLoading)=='undefined') ? true : useLoading;
+	    $.ajax({
+	        url: url,
+	        type: "POST",
+	        data: data,
+	        timeout: 10000,
+	        dataType: "json",
+	        success: function (data) {
+				hideLoading();
+	            if (data.code == 1)
+	            {
+//					showToast('成功',3000);
+	                successFunc(data);
+	            }
+	            else
+	            {
+					subBusy = 1;
+	                showmsg(data.message);
+	            }
+	        },
+	        error: function(XMLHttpRequest, textStatus, errorThrown) {
+				subBusy = 1;
+				hideLoading();
+				showmsg("请求出错,请重试");
+				// alert(XMLHttpRequest.status);
+				// alert(XMLHttpRequest.readyState);
+				// alert(textStatus);
+			},
+	        complete:  function (XMLHttpRequest, status) {
+				subBusy = 1;
+				hideLoading();
+	        	if(status=='timeout'){
+	            	showmsg("请求超时,请检测网络");
+	        	}
+	        	hideLoading(useLoading);
+	        },
+	    });
+	}
+
+</script>
+
+<script type="text/javascript">
+	subBusy = 1;
+	function ajaxnew(url,data,loadingMsg,successMsg,errorMsg,call){
+
+		if(subBusy == 2){
+			return false;
+		}
+		subBusy = 2;
+		if(loadingMsg !=''){
+			showLoading(loadingMsg);
+		}
+
+		$.ajax({
+			url:url,
+			type:'post',
+			data:data,
+			dataType:'json',
+			success:function(data){
+				subBusy = 1;
+				hideLoading();
+				if(data.code == 0){
+					if(successMsg != ''){
+						showToast(successMsg,2000);
+					}
+					try {
+						if(typeof(data.data.url) != 'undefined'){
+							location.replace(data.data.url);
+							return false;
+						}
+					}catch (e){
+
+					}
+					if(data.data != undefined){
+						call(data.data);
+					}
+				}else {
+					if(errorMsg != ''){
+						showmsg(errorMsg);
+					}
+				}
+			},
+			error:function(e1,e2,e3){
+				subBusy = 1;
+				hideLoading();
+				if(e1.status == 400){
+					showmsg('您已提交，请勿重复提交');
+				}else {
+					if(errorMsg != ''){
+						showmsg(errorMsg);
+					}
+				}
+			}
+		});
+	}
+
+</script>
+
+
+<div class="bd">
+    <article class="weui_article">
+        <h1 style="text-align:center; font-size:20px;">微信实名认证介绍</h1>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过微信实名认证后，将在原有武汉交警功能服务基础上获得三大提醒服务及本人本车违章处理，即违法信息第一时间提醒，年审到期提前提醒和驾照审验提前提醒。当车主被电子眼抓拍违法，将能通过微信第一时间掌握信息动态，还能提前2个月获得车辆年审、驾照年检信息，从容办理，能在线处理本人本车违法及缴纳罚款，减少时间成本支出。<br>
+<span style="color:#04BE02;">实名认证须知：<br>1、如您已开通了微信支付，则绑定的驾驶证号要与微信支付绑定的银行卡信息一致，授权实名验证成功后并验证手机号成功即可完成实名认证。； <br>
+2、如您未开通微信支付，请绑定与驾驶证号信息一致的银行卡，并授权实名验证，实名验证成功后并验证手机号成功即可完成实名认证。 <br>
+3、如您通过授权实名验证，请验证手机号，手机号验证成功后即可完成实名认证。<br>
+<span style="color: red">4、据微信告知，其中招行借记卡、招行信用卡、农行信用卡、兴业信用卡、华夏信用卡暂不支持实名，请更换其他银行银行卡。</span>
+</span><br>
+        </p>
+
+    </article>
+</div>
+
+
+
+<div class="weui_btn_area">
+    <a class="weui_btn weui_btn_primary" href="{% url 'certification_inputinfo' %}">开始认证</a>
+</div>
+
+        <img style="display:none;" src="http://f.seals.qq.com/filestore/10019/c5/b3/2e/1000/file/sSz86j8vGd_6084474.png">
+        <div class="js_container">
+            <div class="bd spacing">
+                <div class="weui_dialog_alert" id="dialog1t" style="display:none;">
+                    <div class="weui_mask"></div>
+                    <div class="weui_dialog">
+                        <div class="weui_dialog_bd tishi"><img src="http://f.seals.qq.com/filestore/10019/c5/b3/2e/1000/file/sSz86j8vGd_6084474.png"> </div>
+                        <div class="weui_dialog_hd"><strong class="weui_dialog_title" id="weui_dialog_title1">请检查是否连接网络</strong></div>
+                        <div class="weui_dialog_ft">
+                            <!-- 不需要按钮时，请直接去掉下面a链接区域 -->
+                            <a href="javascript:;" class="weui_btn_dialog primary">确定</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+//            wx.config({
+//                //                    debug: true,
+//                //                    debug: false,
+//                //                appId: "//",
+//                timestamp: "//",
+//                nonceStr: "//",
+//                signature: "//",
+//                jsApiList: [
+//                    'getNetworkType'
+//                    //                ]
+//            });
+//
+//            wx.ready(function () {
+//
+//                var time = setInterval(function () {
+//                    wx.getNetworkType({
+//                        success: function (res) {
+//                            var networkType = res.networkType; // 返回网络类型2g，3g，4g，wifi
+//                            //alert(networkType);
+//                        },
+//                        fail: function (res) {
+//                            //alert(JSON.stringify(res));
+//                            $('#dialog1t').show();
+//                            $('#dialog1t').find('.weui_btn_dialog').on('click', function () {
+//                                $('#dialog1t').hide();
+//                                clearInterval(time);//停止执行
+//                            });
+//                        }
+//                    });
+//                }, 3000);
+//            });
+        </script>
+
+
+
+        <script type="text/javascript">
+            $(function () {
+                var xuhao = parseInt(request("xuhao"));
+                if (xuhao > 0) {
+                    xuanzhong(xuhao);
+                }
+                $(".tab_menu ul li").click(function () {
+                    $(this).addClass("on").siblings().removeClass("on"); //切换选中的按钮高亮状态
+                    var index = $(this).index(); //获取被按下按钮的索引值，需要注意index是从0开始的
+                    $(".tab_box > div").eq(index).show().siblings().hide(); //在按钮选中时在下面显示相应的内容，同时隐藏不需要的框架内容
+                });
+            });
+            function xuanzhong(xuhao) {
+                $(".tab_menu ul li").eq(xuhao).addClass("on").siblings().removeClass("on"); //切换选中的按钮高亮状态
+                $(".tab_box > div").eq(xuhao).show().siblings().hide(); //在按钮选中时在下面显示相应的内容，同时隐藏不需要的框架内容
+                triggerBouncyNav(false);
+            }
+
+            function showTips(text, time) {
+                if(arguments.length < 1) {
+                    alert('请填写提示');
+                    return;
+                }
+
+                var text = text,
+                    time = time;
+
+                var wrap_div = '<div class="myTips" id="myTips" style="position: fixed;top: 0; left: 0;width: 100%;height: 100%;z-index: 10000;"><div style="position: absolute;padding: 20px;background: rgba(0, 0, 0, 0.7);position: absolute; left:50%; top:50%; -webkit-transform:translate(-50%,-50%); transform:translate(-50%,-50%);font-size: 18px;border-radius: 10px;color:#fff;opacity: 0.9;">'+ text +'</div>';
+
+
+                if($('.myTips').length > 0) {
+                    $('.myTips').find('div').text(text);
+                } else {
+                    $("body").append(wrap_div);
+                }
+
+                if(time != undefined && time) {
+                    $("#myTips").show();
+                    setTimeout(function() {
+                        $("#myTips").hide();
+                    }, time);
+                }
+
+            }
+
+            function showLoading(msg,time){
+                $("#loadingToast").show();
+                $("#loadingMsg").html(msg);
+                if(time>0){
+                    setTimeout(function () {
+                        $('#loadingToast').hide();
+                    }, time);
+                }
+            }
+            function hideLoading(){
+//                $('#loadingToast').hide();
+                $('#loadingToast').fadeOut(100);
+            }
+
+            function showToast(msg,time){
+                $("#toast").show();
+                $("#toastMsg").html(msg);
+                if(time>0){
+                    setTimeout(function () {
+                        $("#toast").hide();
+                    }, time);
+                }
+            }
+
+            function hideToast(){
+                $("#toast").hide();
+            }
+
+
+        </script>
+
+        <!--BEGIN_loadingToast-->
+        <div id="loadingToast" class="weui_loading_toast" style="display: none;">
+            <div class="weui_mask_transparent"></div>
+            <div class="weui_toast">
+                <div class="weui_loading">
+                    <div class="weui_loading_leaf weui_loading_leaf_0"></div>
+                    <div class="weui_loading_leaf weui_loading_leaf_1"></div>
+                    <div class="weui_loading_leaf weui_loading_leaf_2"></div>
+                    <div class="weui_loading_leaf weui_loading_leaf_3"></div>
+                    <div class="weui_loading_leaf weui_loading_leaf_4"></div>
+                    <div class="weui_loading_leaf weui_loading_leaf_5"></div>
+                    <div class="weui_loading_leaf weui_loading_leaf_6"></div>
+                    <div class="weui_loading_leaf weui_loading_leaf_7"></div>
+                    <div class="weui_loading_leaf weui_loading_leaf_8"></div>
+                    <div class="weui_loading_leaf weui_loading_leaf_9"></div>
+                    <div class="weui_loading_leaf weui_loading_leaf_10"></div>
+                    <div class="weui_loading_leaf weui_loading_leaf_11"></div>
+                </div>
+                <p class="weui_toast_content" id="loadingMsg">数据保存中</p>
+            </div>
+        </div>
+        <!--END loadingToast-->
+
+        <!--BEGIN toast-->
+        <div id="toast" style="display: none;">
+            <div class="weui_mask_transparent"></div>
+            <div class="weui_toast">
+                <i class="weui_icon_toast"></i>
+                <p class="weui_toast_content" id="toastMsg">已完成</p>
+            </div>
+        </div>
+        <!--END toast-->
+
+
+        <style type="text/css">
+    .bottom{ width:100%;margin:20px auto 30px;clear:both; z-index: -100;}
+    .my_foot20 {
+        color: #b7b7b7;
+        text-align: center;
+        height: 60px;
+        line-height: 20px;
+        padding:5px 0px 15px 0px;
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+
+    .my_foot20 a {
+        color: #b7b7b7;
+    }
+
+    .foot20 {
+        width: 240px;
+        height: 38px;
+        background: url(http://f.seals.qq.com/filestore/10019/c5/b3/2e/1000/file/UET0U73uBz_6952212.png) no-repeat center center;
+        background-size: 100% 100%;
+        margin:20px auto 0;
+    }
+
+    .foot20 p {
+        color: #b7b7b7;
+        text-align:  center;
+        height:      24px;
+        line-height: 24px;
+    }
+
+
+</style>
+<div class="bottom">
+    <br>
+    <div class="foot20 footer-page"></div>
+</div>
+<!--
+<script type="text/javascript">
+    var footer = $("div.bottom");
+    $(function () {
+        lrFixFooter();
+    })
+    function lrFixFooter() {
+        fixFooter();
+        $(window).on('resize.footer', function () {
+            fixFooter();
+        });
+        $(window).on('scroll.footer', function () {
+            fixFooter();
+        });
+    }
+    function fixFooter() {
+        var cheight = $(document.body).height() - 4;
+        if ($(footer).css("position") == "absolute") {
+            cheight = $(document.body).height() - 4 + $(footer).height();
+        }
+        if (cheight <= $(window).height()) {
+            footer.css({
+                width: "100%",
+                position: "absolute",
+                left: 0,
+                bottom: 0
+            });
+        } else {
+            footer.css({
+                position: "static"
+            });
+        }
+    }
+</script>  -->        <script>
+            var _mtac = {};
+            (function() {
+                var mta = document.createElement("script");
+                mta.src = "https://pingjs.qq.com/h5/stats.js?v2.0.2";
+                mta.setAttribute("name", "MTAH5");
+                mta.setAttribute("sid", "500596854");
+                var s = document.getElementsByTagName("script")[0];
+                s.parentNode.insertBefore(mta, s);
+            })();
+        </script>
+
+
+</body></html>

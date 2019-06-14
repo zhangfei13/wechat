@@ -1,0 +1,77 @@
+<!DOCTYPE html><html style="font-size: 32.6px;"><head>
+    <title>{{ info_list.title }}</title>
+    <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style">
+    <meta content="YES" name="apple-touch-fullscreen">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="no-cache" http-equiv="pragma">
+    <meta content="no-cache" http-equiv="cache-control">
+    <meta content="0" http-equiv="expires">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta content="telephone=no" name="format-detection">
+
+    <style>
+        body {
+            background: #d7eefe;
+            margin: 0;
+            padding: 0
+        }
+
+        #background {
+            width: 100%;
+            margin-top: -3rem;
+        }
+
+        #downloadDiv {
+            position: absolute;
+            left: 3.8rem;
+            top: 33.2rem;
+            width: 17.3rem;
+            background: #2B7CD8;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        #downloadA {
+            width: 100%;
+            height: 100%;
+            display: block;
+            color: #fff;
+            font-size: 1.1rem;
+            text-decoration: none;
+            letter-spacing: 1.1rem;
+            padding: .8rem 0;
+            padding-left: .8rem;
+        }
+
+        #tipDiv {
+            position: fixed;
+            height: 100%;
+            left: 0;
+            display: none;
+            top: 0;
+            width: 100%;
+            font-size: 1rem;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.6)
+        }
+
+        #tipDiv img {
+            width: 100%;
+        }
+    </style>
+
+    <script src="jquery-1.9.1.min.js" charset="UTF-8"></script><style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style>
+    <script src="wap.js?v=1.10.2" charset="UTF-8"></script>
+
+    <script type="text/javascript" src="https://gab.122.gov.cn/app/m/sysquery/getVersionDownload?0.7027669926687423"></script></head>
+    <body>
+        {% load static %}
+        <img alt="" src="{% static "img/jiaoguan12123.png"%}" id="background">
+        <div id="downloadDiv"><a id="downloadA" href="javascript:void(0);">下载</a></div>
+        <div id="tipDiv">
+            <img src="live_weixin.png">
+        </div>
+
+    </body>
+</html>

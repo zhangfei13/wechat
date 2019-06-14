@@ -1,0 +1,384 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width,maximum-scale=1.0,user-scalable=no">
+
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/weui.min.css">
+    <link rel="stylesheet" href="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/background.css">
+    <link rel="stylesheet" href="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/style.css">
+<!--    <script type="text/javascript" src='/assets/js/jquery-1.8.3.min.js'></script>-->
+    <script src="https://pingjs.qq.com/h5/stats.js?v2.0.2" name="MTAH5" sid="500596854"></script><script type="text/javascript" src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/zepto.min.js"></script>
+    <style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style><script src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/vue.js"></script>
+    <script type="text/javascript" src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/yanzheng_wx_1.js"></script>
+    <style>
+        .msgbox_wrap, .error_msg {
+            font-size: 14px;
+            color: #fff;
+            line-height: 34px;
+            background-color: #E64340;
+            text-align: center;
+            position: fixed;
+            -webkit-transform: translateZ(0);
+            width: 100%;
+            top: 0;
+            z-index: 9992;
+        }
+        body{font-size: 12px;font-family: "Microsoft Yahei", "微软雅黑", Arial, Tahoma;}
+    </style>
+    <script>
+        function showTips(text, time) {
+            if(arguments.length < 1) {
+                alert('请填写提示');
+                return;
+            }
+
+            var text = text,
+                time = time;
+
+            var wrap_div = '<div class="myTips" id="myTips" style="position: fixed;top: 0; left: 0;width: 100%;height: 100%;z-index: 10000;"><div style="position: absolute;padding: 20px;background: rgba(0, 0, 0, 0.7);position: absolute; left:50%; top:50%; -webkit-transform:translate(-50%,-50%); transform:translate(-50%,-50%);font-size: 18px;border-radius: 10px;color:#fff;opacity: 0.9;">'+ text +'</div>';
+
+
+            if($('.myTips').length > 0) {
+                $('.myTips').find('div').text(text);
+            } else {
+                $("body").append(wrap_div);
+            }
+
+            if(time != undefined && time) {
+                $("#myTips").fadeIn(100);
+                setTimeout(function() {
+                    $("#myTips").hide();
+                }, time);
+            }
+
+        }
+        function showmsg(neirong)
+        {
+            if (neirong == '')
+            {
+                return false;
+            }
+            $("#error_msg").html(neirong);
+            $("#error_msg").addClass("error_msg");
+            curCount = count;
+            InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一
+        }
+        function showLoading(msg,time){
+            var $loadingToast = $('#loadingToast');
+            $loadingToast.fadeIn(100);
+            $(".weui-toast__content").html(msg);
+            if(time>0){
+                setTimeout(function () {
+                    $loadingToast.fadeOut(100);
+                }, time);
+            }
+        }
+        function hideLoading(){
+            var $loadingToast = $('#loadingToast');
+            $loadingToast.fadeOut(100);
+        }
+
+        function showToast(msg,time){
+            var $toast = $('#toast');
+            if ($toast.css('display') != 'none') return;
+            $toast.fadeIn(100);
+            $("#toastMsg").html(msg);
+            if(time>0){
+                setTimeout(function () {
+                    $toast.fadeOut(100);
+                }, time);
+            }
+        }
+
+        function hideToast(){
+            var $toast = $('#toast');
+            $toast.fadeOut(100);
+        }
+
+    </script>
+
+</head>
+<body>
+<div class="msgbox_wrap unhappy_error" id="error_msg"></div>
+
+
+<!--BEGIN_loadingToast-->
+    <div id="loadingToast" style="opacity: 0; display: none;z-index: 999999;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-loading weui-icon_toast"></i>
+            <p class="weui-toast__content">数据加载中</p>
+        </div>
+    </div>
+<!--END loadingToast-->
+
+<!--BEGIN toast-->
+    <div id="toast" style="opacity: 0; display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+            <p id="toastMsg" class="weui-toast__content">已完成</p>
+        </div>
+    </div>
+<!--END toast-->
+
+<script type="text/javascript">
+    subBusy = 1;
+    function ajaxnew(url,data,loadingMsg,successMsg,errorMsg,call){
+        if(subBusy == 2){
+            return false;
+        }
+        subBusy = 2;
+        if(loadingMsg !=''){
+            showLoading(loadingMsg);
+        }
+
+        $.ajax({
+            url:url,
+            type:'post',
+            data:data,
+            dataType:'json',
+            success:function(data){
+                subBusy = 1;
+                hideLoading();
+                if(data.code == 0){
+                    if(successMsg != ''){
+                        showToast(successMsg,2000);
+                    }
+                    if(typeof (call) == 'function'){
+                        call(data.data);
+                        return false;
+                    }
+
+                    try {
+                        if(typeof(data.data.url) != 'undefined'){
+                            location.replace(data.data.url);
+                            return false;
+                        }
+                    }catch (e){
+
+                    }
+
+
+
+                }else {
+                    if(errorMsg != ''){
+                        showmsg(errorMsg);
+                    }else if(typeof (data.msg) != 'undefined'){
+                        showmsg(data.msg);
+                    }
+                }
+            },
+            error:function(e1,e2,e3){
+                subBusy = 1;
+                hideLoading();
+                if(e1.status == 400){
+                    showmsg('您已提交，请勿重复提交');
+                }else {
+                    if(errorMsg != ''){
+                        showmsg(errorMsg);
+                    }
+                }
+            }
+        });
+    }
+
+
+    function ajax(url, data, successFunc, useLoading)
+    {
+        if(subBusy == 2){
+            return false;
+        }
+        subBusy = 2;
+
+        useLoading = (typeof(useLoading)=='undefined') ? true : useLoading;
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: data,
+            timeout: 10000,
+            dataType: "json",
+            success: function (data) {
+                hideLoading();
+                if (data.code == 1)
+                {
+//					showToast('成功',3000);
+                    successFunc(data);
+                }
+                else
+                {
+                    subBusy = 1;
+                    showmsg(data.message);
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                subBusy = 1;
+                hideLoading();
+                showmsg("请求出错,请重试");
+                // alert(XMLHttpRequest.status);
+                // alert(XMLHttpRequest.readyState);
+                // alert(textStatus);
+            },
+            complete:  function (XMLHttpRequest, status) {
+                subBusy = 1;
+                hideLoading();
+                if(status=='timeout'){
+                    showmsg("请求超时,请检测网络");
+                }
+                hideLoading(useLoading);
+            },
+        });
+    }
+</script>
+
+<style>
+    .time{
+        font-size: 14px;
+        color: #9f9f9f;
+        padding-top: 5px;
+    }
+</style>
+
+<div class="weui-cells">
+    <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <div class="weui-cell__hd">
+            <label for="" class="weui-label">年份选择</label>
+        </div>
+        <div class="weui-cell__bd">
+            <select class="weui-select" name="select1" id="date">
+                <option selected="" value="2019">2019</option>
+                <option value="2018">2018</option>
+                <option value="2017">2017</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+    <div class="weui-cells" style="margin: 0px 10px;margin-top: 15px;">
+        <div class="weui-cell">
+            <div class="weui-cell__bd" style="text-align: center; padding: 20px 0px;">
+                <p><img width="100px;" src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/empty20190515.png"></p>
+                <p style="font-size: 14px; color: rgb(159, 159, 159);">暂无数据</p>
+            </div>
+        </div>
+    </div>
+
+<!--<div class="weui-msg" style="padding-top:10px;">-->
+<!--    <div class="weui-cells" style="margin: 0 10px;">-->
+<!--        <div class="weui-msg__icon-area" style="margin-bottom: 0px;"><img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/empty20190515.png">  </div>-->
+<!--        <div class="weui-msg__text-area">-->
+<!--            <h2 class="weui-msg__title" style="color: #9f9f9f;">暂无订单</h2>-->
+<!--    <!--        <p class="weui-msg__desc">暂无订单</p>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="weui-msg__opr-area">-->
+<!--        <p class="weui-btn-area">-->
+<!--            <a href="javascript:history.back();" class="weui-btn weui-btn_default">返回</a>-->
+<!--        </p>-->
+<!--    </div>-->
+<!--</div>-->
+
+<script type="text/javascript">
+    $(document).ready(function(){
+       $("#date").change(function(){
+            var year = $(this).val();
+           location.replace('/violation/orderhistory?year='+year);
+       });
+    });
+</script>
+
+
+<script>
+    var _mtac = {};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "https://pingjs.qq.com/h5/stats.js?v2.0.2";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500596854");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<style type="text/css">
+    .bottom{ width:100%;margin:20px auto 30px;clear:both; z-index: -100;}
+    .my_foot20 {
+        color: #b7b7b7;
+        text-align: center;
+        height: 60px;
+        line-height: 20px;
+        padding:5px 0px 15px 0px;
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+
+    .my_foot20 a {
+        color: #b7b7b7;
+    }
+
+    .foot20 {
+        width: 240px;
+        height: 38px;
+        background: url(http://f.seals.qq.com/filestore/10019/c5/b3/2e/1000/file/UET0U73uBz_6952212.png) no-repeat center center;
+        background-size: 100% 100%;
+        margin:20px auto 0;
+    }
+
+    .foot20 p {
+        color: #b7b7b7;
+        text-align:  center;
+        height:      24px;
+        line-height: 24px;
+    }
+
+
+</style>
+<div class="bottom">
+    <br>
+    <div class="foot20 footer-page"></div>
+</div>
+<!--
+<script type="text/javascript">
+    var footer = $("div.bottom");
+    $(function () {
+        lrFixFooter();
+    })
+    function lrFixFooter() {
+        fixFooter();
+        $(window).on('resize.footer', function () {
+            fixFooter();
+        });
+        $(window).on('scroll.footer', function () {
+            fixFooter();
+        });
+    }
+    function fixFooter() {
+        var cheight = $(document.body).height() - 4;
+        if ($(footer).css("position") == "absolute") {
+            cheight = $(document.body).height() - 4 + $(footer).height();
+        }
+        if (cheight <= $(window).height()) {
+            footer.css({
+                width: "100%",
+                position: "absolute",
+                left: 0,
+                bottom: 0
+            });
+        } else {
+            footer.css({
+                position: "static"
+            });
+        }
+    }
+</script>  -->
+
+
+
+
+
+</body></html>

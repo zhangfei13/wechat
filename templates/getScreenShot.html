@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>{{ context.title }}</title>
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <style type="text/css">
+        html,body{
+            width: 100%;
+            height: 100%;
+            background: url("http://images.vrm.cn/assets/kdlins-newyear2017_20170120/firework.gif")repeat, -webkit-linear-gradient(top,#9370DB,lightblue,white);
+            background-attachment:fixed;
+        }
+    </style>
+
+    <script type="text/javascript">
+        function preImg(sourceId, targetId) {
+        if (typeof FileReader === 'undefined') {
+            alert('Your browser does not support FileReader...');
+            return;
+        }
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            var img = document.getElementById(targetId);
+            img.src = this.result;
+        }
+        reader.readAsDataURL(document.getElementById(sourceId).files[0]);
+    }
+    </script>
+</head>
+<body>
+    <script type="text/javascript">
+
+    </script>
+    {% include 'menu.html' %}
+
+    <div class="container" style="height: 100%; margin-top: 50px;background-color: rgba(255,251,240,0.7);">
+        <div class="starter-template">
+                {% load static %}
+                <img id="screenshot" src="{% static "img/screenshot.jpg"%}" style="display: block; width: 100%; height: auto" />
+        </div>
+    </div><!-- /.container -->
+
+</body>
+</html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width,maximum-scale=1.0,user-scalable=no">
+
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+
+    <title>{{ info_list.title }}</title>
+    <link rel="stylesheet" href="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/weui.min.css">
+    <link rel="stylesheet" href="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/background.css">
+    <link rel="stylesheet" href="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/style.css">
+<!--    <script type="text/javascript" src='/assets/js/jquery-1.8.3.min.js'></script>-->
+    <script src="https://pingjs.qq.com/h5/stats.js?v2.0.2" name="MTAH5" sid="500596854"></script><script type="text/javascript" src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/zepto.min.js"></script>
+    <script src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/vue.js"></script><style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style>
+    <script type="text/javascript" src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/yanzheng_wx_1.js"></script>
+    <style>
+        .msgbox_wrap, .error_msg {
+            font-size: 14px;
+            color: #fff;
+            line-height: 34px;
+            background-color: #E64340;
+            text-align: center;
+            position: fixed;
+            -webkit-transform: translateZ(0);
+            width: 100%;
+            top: 0;
+            z-index: 9992;
+        }
+        body{font-size: 12px;font-family: "Microsoft Yahei", "微软雅黑", Arial, Tahoma;}
+    </style>
+    <script>
+        function showTips(text, time) {
+            if(arguments.length < 1) {
+                alert('请填写提示');
+                return;
+            }
+
+            var text = text,
+                time = time;
+
+            var wrap_div = '<div class="myTips" id="myTips" style="position: fixed;top: 0; left: 0;width: 100%;height: 100%;z-index: 10000;"><div style="position: absolute;padding: 20px;background: rgba(0, 0, 0, 0.7);position: absolute; left:50%; top:50%; -webkit-transform:translate(-50%,-50%); transform:translate(-50%,-50%);font-size: 18px;border-radius: 10px;color:#fff;opacity: 0.9;">'+ text +'</div>';
+
+
+            if($('.myTips').length > 0) {
+                $('.myTips').find('div').text(text);
+            } else {
+                $("body").append(wrap_div);
+            }
+
+            if(time != undefined && time) {
+                $("#myTips").fadeIn(100);
+                setTimeout(function() {
+                    $("#myTips").hide();
+                }, time);
+            }
+
+        }
+        function showmsg(neirong)
+        {
+            if (neirong == '')
+            {
+                return false;
+            }
+            $("#error_msg").html(neirong);
+            $("#error_msg").addClass("error_msg");
+            curCount = count;
+            InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一
+        }
+        function showLoading(msg,time){
+            var $loadingToast = $('#loadingToast');
+            $loadingToast.fadeIn(100);
+            $(".weui-toast__content").html(msg);
+            if(time>0){
+                setTimeout(function () {
+                    $loadingToast.fadeOut(100);
+                }, time);
+            }
+        }
+        function hideLoading(){
+            var $loadingToast = $('#loadingToast');
+            $loadingToast.fadeOut(100);
+        }
+
+        function showToast(msg,time){
+            var $toast = $('#toast');
+            if ($toast.css('display') != 'none') return;
+            $toast.fadeIn(100);
+            $("#toastMsg").html(msg);
+            if(time>0){
+                setTimeout(function () {
+                    $toast.fadeOut(100);
+                }, time);
+            }
+        }
+
+        function hideToast(){
+            var $toast = $('#toast');
+            $toast.fadeOut(100);
+        }
+
+    </script>
+
+</head>
+<body>
+<div class="msgbox_wrap unhappy_error" id="error_msg"></div>
+
+
+<!--BEGIN_loadingToast-->
+    <div id="loadingToast" style="opacity: 0; display: none;z-index: 999999;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-loading weui-icon_toast"></i>
+            <p class="weui-toast__content">数据加载中</p>
+        </div>
+    </div>
+<!--END loadingToast-->
+
+<!--BEGIN toast-->
+    <div id="toast" style="opacity: 0; display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+            <p id="toastMsg" class="weui-toast__content">已完成</p>
+        </div>
+    </div>
+<!--END toast-->
+
+<script type="text/javascript">
+    subBusy = 1;
+    function ajaxnew(url,data,loadingMsg,successMsg,errorMsg,call){
+        if(subBusy == 2){
+            return false;
+        }
+        subBusy = 2;
+        if(loadingMsg !=''){
+            showLoading(loadingMsg);
+        }
+
+        $.ajax({
+            url:url,
+            type:'post',
+            data:data,
+            dataType:'json',
+            success:function(data){
+                subBusy = 1;
+                hideLoading();
+                if(data.code == 0){
+                    if(successMsg != ''){
+                        showToast(successMsg,2000);
+                    }
+                    if(typeof (call) == 'function'){
+                        call(data.data);
+                        return false;
+                    }
+
+                    try {
+                        if(typeof(data.data.url) != 'undefined'){
+                            location.replace(data.data.url);
+                            return false;
+                        }
+                    }catch (e){
+
+                    }
+
+
+
+                }else {
+                    if(errorMsg != ''){
+                        showmsg(errorMsg);
+                    }else if(typeof (data.msg) != 'undefined'){
+                        showmsg(data.msg);
+                    }
+                }
+            },
+            error:function(e1,e2,e3){
+                subBusy = 1;
+                hideLoading();
+                if(e1.status == 400){
+                    showmsg('您已提交，请勿重复提交');
+                }else {
+                    if(errorMsg != ''){
+                        showmsg(errorMsg);
+                    }
+                }
+            }
+        });
+    }
+
+
+    function ajax(url, data, successFunc, useLoading)
+    {
+        if(subBusy == 2){
+            return false;
+        }
+        subBusy = 2;
+
+        useLoading = (typeof(useLoading)=='undefined') ? true : useLoading;
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: data,
+            timeout: 10000,
+            dataType: "json",
+            success: function (data) {
+                hideLoading();
+                if (data.code == 1)
+                {
+//					showToast('成功',3000);
+                    successFunc(data);
+                }
+                else
+                {
+                    subBusy = 1;
+                    showmsg(data.message);
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                subBusy = 1;
+                hideLoading();
+                showmsg("请求出错,请重试");
+                // alert(XMLHttpRequest.status);
+                // alert(XMLHttpRequest.readyState);
+                // alert(textStatus);
+            },
+            complete:  function (XMLHttpRequest, status) {
+                subBusy = 1;
+                hideLoading();
+                if(status=='timeout'){
+                    showmsg("请求超时,请检测网络");
+                }
+                hideLoading(useLoading);
+            },
+        });
+    }
+</script>
+
+<link rel="stylesheet" type="text/css" href="https://f.seals.qq.com/filestore/10019/c5/b3/2e/1000/file/PCn5npeVOF_8136507.css?v=1542802045">
+<link rel="stylesheet" type="text/css" href="&#9;https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home.css">
+<div class="main">
+
+    <!-- banner section -->
+    <div class="banner">
+        <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/banner.jpg">
+    </div>
+    <!-- banner end -->
+
+    <!-- tail limit -->
+    <div class="tail-limit">
+        <div class="imgbox">
+            <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/notice.png">
+        </div>
+        <div class="limit-nums">
+            <span><marquee scrollamount="5" style="line-height:30px; margin-bottom:0;overflow:hidden;font-size: 0.9em;">今日长江大桥、江汉一桥限行尾号为：2、4、6、8、0</marquee></span>
+        </div>
+    </div>
+    <!-- tail limit end -->
+
+    <!-- guide list block -->
+    <div class="guide-list">
+        <div class="row">
+            <a href="/user/indexnew" class="item">
+                <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/guide1.png">
+            </a>
+<!--            -->                <a href="/violation/notice" class="item">
+                    <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/guide2.png">
+                </a>
+<!--            --><!--            <a href="/trafficbreak/xz" class="item">-->
+<!--                <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/guide2.png">-->
+<!--            </a>-->
+<!--            -->        </div>
+        <div class="row">
+            <a href="/luo/index" class="item">
+                <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/guide3.png">
+            </a>
+            <a href="/quickwithdrawal/index" class="item">
+<!--            <a href="/site/close" class="item">-->
+                <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/guide4.png">
+            </a>
+        </div>
+    </div>
+    <!-- guide list block end -->
+
+    <!-- icon btns list -->
+    <div class="icon-btns">
+        <div class="row">
+            <a href="/menu2018/driver" class="item car">
+                <div class="imgbox">
+                    <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/icon1.png" width="42">
+                </div>
+                <div class="wdsbox">
+                    <span>车驾业务</span>
+                </div>
+            </a>
+<!--            -->                <a href="/swjg/notice" class="item iilege">
+                    <!--            <a href="/site/close" class="item iilege">-->
+                    <div class="imgbox">
+                        <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/icon2.png" width="40">
+                    </div>
+                    <div class="wdsbox">
+                        <span>首违警告</span>
+                    </div>
+                </a>
+<!--            --><!--            <a href="/shouwjg/index" class="item iilege">-->
+<!--                <div class="imgbox">-->
+<!--                    <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/icon2.png" width="40">-->
+<!--                </div>-->
+<!--                <div class="wdsbox">-->
+<!--                    <span>首违警告</span>-->
+<!--                </div>-->
+<!--            </a>-->
+<!--            --><!--            -->                <a href="/study/notice" class="item learn">
+                    <!--            <a href="/site/close" class="item learn">-->
+                    <div class="imgbox">
+                        <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/icon3.png" width="40">
+                    </div>
+                    <div class="wdsbox">
+                        <span>学习减分</span>
+                    </div>
+                </a>
+<!--            -->
+<!--            <a href="/answerquestion/xuzhi" class="item learn">-->
+<!--                <div class="imgbox">-->
+<!--                    <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/icon3.png" width="40">-->
+<!--                </div>-->
+<!--                <div class="wdsbox">-->
+<!--                    <span>学习减分</span>-->
+<!--                </div>-->
+<!--            </a>-->
+<!--            --><!--            <a href="/site/sspclose" class="item tokephoto">-->
+<!--                <div class="imgbox">-->
+<!--                    <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/icon4.png" width="38">-->
+<!--                </div>-->
+<!--                <div class="wdsbox">-->
+<!--                    <span>随手拍</span>-->
+<!--                </div>-->
+<!--            </a>-->
+<!--            <a href="http://wcg.wuhanjiaojing.com/study/net/check/form" class="item online">-->
+            <a href="http://wcg.wuhanjiaojing.com/study/net/check/form" class="item online">
+<!--            <a href="/site/close" class="item iilege">-->
+                <div class="imgbox">
+                    <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/icon7.png" width="32">
+                </div>
+                <div class="wdsbox">
+                    <span>在线学习</span>
+                </div>
+            </a>
+        </div>
+        <div class="row">
+            <a href="/menu2018/trip" class="item trip">
+                <div class="imgbox">
+                    <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/icon5.png" width="47">
+                </div>
+                <div class="wdsbox">
+                    <span>出行指南</span>
+                </div>
+            </a>
+            <a href="/menu2018/report" class="item report">
+                <div class="imgbox">
+                    <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/icon6.png" width="30">
+                </div>
+                <div class="wdsbox">
+                    <span>我要上报</span>
+                </div>
+            </a>
+
+            <a href="http://www.sinoassistance.com/ClientCustomerAction.do?appCode=WUHANJG2016" class="item help">
+                <div class="imgbox">
+                    <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/icon1.png" width="48">
+                </div>
+                <div class="wdsbox">
+                    <span>应急求援</span>
+                </div>
+            </a>
+
+            <a href="/suishoupai/Choosetype" class="item online">
+                <div class="imgbox">
+                    <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/ssp.png" width="32">
+                </div>
+                <div class="wdsbox">
+                    <span>随手拍</span>
+                </div>
+            </a>
+        </div>
+    </div>
+    <!-- icon btns list end -->
+
+</div>
+
+<div class="weui-tabbar">
+    <a href="{%  url 'v_user' %}" class="weui-tabbar__item weui-bar__item_on">
+        <div class="imgbox">
+            <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/vuser_on.png" alt="" width="35">
+        </div>
+        <p class="weui-tabbar__label">V用户</p>
+    </a>
+    <a href="{%  url 'huimin_service' %}" class="weui-tabbar__item">
+        <div class="imgbox">
+            <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/finite.png" alt="" width="15">
+        </div>
+        <p class="weui-tabbar__label">惠民服务</p>
+    </a>
+    <a href="{%  url 'information_search' %}" class="weui-tabbar__item">
+        <div class="imgbox">
+            <img src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home/search.png" alt="" width="23">
+        </div>
+        <p class="weui-tabbar__label">信息查询</p>
+    </a>
+</div>
+
+<!--新的浮层 温馨提示-->
+<!---->
+<!--<div class="bd spacing infoMsg">-->
+<!--    <div class="weui_dialog_alert" id="infoMsg">-->
+<!--        <div class="weui_mask"></div>-->
+<!--        <div class="weui_dialog">-->
+<!--            <div class="weui_dialog_hd"><strong class="weui_dialog_title" style="color:#000;font-weight: bold;">温馨提示</strong></div>-->
+<!--            <div class="weui_dialog_bd" ><p style="text-indent:2em; text-align: justify;color: #000; ">因系统升级，5月24日18:00至5月25日7:00，部分业务功能暂时停止服务，给您带来不便，敬请谅解！</p></div>-->
+<!--            <div class="weui_dialog_ft">-->
+<!--                <a href="javascript:;" class="weui_btn_dialog default" style="font-weight: bold;" onclick="infoMsg()">我知道了</a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+<!-- home page js -->
+<script type="text/javascript" src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/home.js"></script>
+<script>
+    function infoMsg(){
+        $('.infoMsg').hide();
+    }
+</script>
+<!-- home page js -->
+
+
+<script>
+    var _mtac = {};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "https://pingjs.qq.com/h5/stats.js?v2.0.2";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500596854");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<style type="text/css">
+    .bottom{ width:100%;margin:20px auto 30px;clear:both; z-index: -100;}
+    .my_foot20 {
+        color: #b7b7b7;
+        text-align: center;
+        height: 60px;
+        line-height: 20px;
+        padding:5px 0px 15px 0px;
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+
+    .my_foot20 a {
+        color: #b7b7b7;
+    }
+
+    .foot20 {
+        width: 240px;
+        height: 38px;
+        background: url(http://f.seals.qq.com/filestore/10019/c5/b3/2e/1000/file/UET0U73uBz_6952212.png) no-repeat center center;
+        background-size: 100% 100%;
+        margin:20px auto 0;
+    }
+
+    .foot20 p {
+        color: #b7b7b7;
+        text-align:  center;
+        height:      24px;
+        line-height: 24px;
+    }
+
+
+</style>
+<div class="bottom">
+    <br>
+    <div class="foot20 footer-page"></div>
+</div>
+<!--
+<script type="text/javascript">
+    var footer = $("div.bottom");
+    $(function () {
+        lrFixFooter();
+    })
+    function lrFixFooter() {
+        fixFooter();
+        $(window).on('resize.footer', function () {
+            fixFooter();
+        });
+        $(window).on('scroll.footer', function () {
+            fixFooter();
+        });
+    }
+    function fixFooter() {
+        var cheight = $(document.body).height() - 4;
+        if ($(footer).css("position") == "absolute") {
+            cheight = $(document.body).height() - 4 + $(footer).height();
+        }
+        if (cheight <= $(window).height()) {
+            footer.css({
+                width: "100%",
+                position: "absolute",
+                left: 0,
+                bottom: 0
+            });
+        } else {
+            footer.css({
+                position: "static"
+            });
+        }
+    }
+</script>  -->
+
+
+
+
+
+</body></html>

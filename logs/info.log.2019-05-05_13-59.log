@@ -1,0 +1,68 @@
+2019-05-05 09:14:52,577 - WARNING: Not Found: /hp/device/InternalPages/Index
+2019-05-05 10:19:09,439 - WARNING: Not Found: /favicon.ico
+2019-05-05 10:19:21,240 - WARNING: Not Found: /favicon.ico
+2019-05-05 10:21:49,501 - WARNING: Not Found: /favicon.ico
+2019-05-05 12:08:02,169 - INFO: come in makeScreenShot..
+2019-05-05 12:08:02,320 - ERROR: Internal Server Error: /getScreenShot/
+Traceback (most recent call last):
+  File "d:\Python\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "d:\Python\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "d:\Python\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\python\managePlatform\ferry_management_platform\views.py", line 26, in getScreenShot
+    makeScreenShot()
+  File "E:\python\managePlatform\ferry_management_platform\views.py", line 54, in makeScreenShot
+    image = ImageGrab.grab()
+  File "d:\Python\lib\site-packages\PIL\ImageGrab.py", line 41, in grab
+    size, data = grabber()
+OSError: screen grab failed
+2019-05-05 12:08:12,513 - WARNING: Not Found: /favicon.ico
+2019-05-05 12:08:22,051 - WARNING: Not Found: /favicon.ico
+2019-05-05 13:54:27,352 - INFO: come in makeScreenShot..
+2019-05-05 13:54:27,407 - ERROR: Internal Server Error: /getScreenShot/
+Traceback (most recent call last):
+  File "d:\Python\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "d:\Python\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "d:\Python\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\python\managePlatform\ferry_management_platform\views.py", line 26, in getScreenShot
+    makeScreenShot()
+  File "E:\python\managePlatform\ferry_management_platform\views.py", line 54, in makeScreenShot
+    image = ImageGrab.grab()
+  File "d:\Python\lib\site-packages\PIL\ImageGrab.py", line 41, in grab
+    size, data = grabber()
+OSError: screen grab failed
+2019-05-05 13:55:37,466 - INFO: come in makeScreenShot..
+2019-05-05 13:55:37,492 - ERROR: Internal Server Error: /getScreenShot/
+Traceback (most recent call last):
+  File "d:\Python\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "d:\Python\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "d:\Python\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\python\managePlatform\ferry_management_platform\views.py", line 26, in getScreenShot
+    makeScreenShot()
+  File "E:\python\managePlatform\ferry_management_platform\views.py", line 54, in makeScreenShot
+    image = ImageGrab.grab()
+  File "d:\Python\lib\site-packages\PIL\ImageGrab.py", line 41, in grab
+    size, data = grabber()
+OSError: screen grab failed
+2019-05-05 13:57:05,475 - INFO: come in makeScreenShot..
+2019-05-05 13:57:32,655 - INFO: come in makeScreenShot..
+2019-05-05 13:59:21,409 - INFO: come in makeScreenShot..
+2019-05-05 14:06:48,596 - INFO: come in makeScreenShot..
+2019-05-05 20:17:03,874 - WARNING: Not Found: /favicon.ico
+2019-05-05 20:17:15,403 - WARNING: Not Found: /favicon.ico
+2019-05-05 20:17:26,071 - INFO: come in makeScreenShot..
+2019-05-05 20:18:57,103 - WARNING: Not Found: /favicon.ico
+2019-05-06 08:18:37,318 - WARNING: Not Found: /favicon.ico
+2019-05-06 08:18:46,040 - INFO: come in makeScreenShot..
+2019-05-06 08:20:17,788 - WARNING: Not Found: /favicon.ico
+2019-05-06 08:20:29,922 - WARNING: Not Found: /favicon.ico
+2019-05-06 08:21:25,014 - INFO: come in makeScreenShot..
+2019-05-06 08:22:55,198 - WARNING: Not Found: /favicon.ico
