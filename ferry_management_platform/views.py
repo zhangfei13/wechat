@@ -4,7 +4,9 @@ import sys
 import requests
 import urllib3
 import urllib.request
+import configparser
 import json
+import os
 from django.shortcuts import render
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
@@ -14,14 +16,42 @@ from wechat_sdk.exceptions import ParseError
 from wechat_sdk.messages import (TextMessage, VoiceMessage, ImageMessage, VideoMessage, LinkMessage, LocationMessage, EventMessage, ShortVideoMessage)
 
 access_token = ""
+
+currentDir, filename = os.path.split(os.path.abspath(__file__))
+currentDir = currentDir.replace("\\", "/")
+if currentDir.endswith('/') is False:
+    currentDir = currentDir + '/'
+config_file = currentDir + "../conf/config.ini"
+url_base = ""
+token = ""
+appid = ""
+appsecret = ""
+encrypt_mode = ""
+encoding_aes_key = ""
+if os.path.exists(config_file):
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    if config.has_option("SERVICE", "url"):
+        url_base = config.get("SERVICE", "url")
+    if config.has_option("WECHAT", "token"):
+        token = config.get("WECHAT", "token")
+    if config.has_option("WECHAT", "appid"):
+        appid = config.get("WECHAT", "appid")
+    if config.has_option("WECHAT", "appsecret"):
+        appsecret = config.get("WECHAT", "appsecret")
+    if config.has_option("WECHAT", "encrypt_mode"):
+        encrypt_mode = config.get("WECHAT", "encrypt_mode")
+    if config.has_option("WECHAT", "encoding_aes_key"):
+        encoding_aes_key = config.get("WECHAT", "encoding_aes_key")
+
 config = WechatConf(
-        token='weixin',
-        appid='wx4637c5b653dfffb1',
-        appsecret='510aff49493dbe2503939398065ccfd6',
-        encrypt_mode='YOUR_MODE',
-        encoding_aes_key='YOUR_AES_KEY'
+        token=token,
+        appid=appid,
+        appsecret=appsecret,
+        encrypt_mode=encrypt_mode,
+        encoding_aes_key=encoding_aes_key
 )
-url_base = "http://xg5srk.natappfree.cc"
+print("*********************************************", url_base, token, appid, appsecret, encrypt_mode, encoding_aes_key)
 
 @csrf_exempt
 def wechat_home(request):
@@ -133,56 +163,48 @@ def createMenu():
                             headers={'Content-Type': 'application/json'},
                             body=jsonStr)
     resp_data = str(response.data, encoding="utf-8")
-    print(resp_data)
+    print("注册menu:", resp_data)
 
 def jilu(request):
     info_list = {}
     info_list['title'] = "违法记录"
-    info_list['url_base'] = url_base
     return render(request, 'jilu.html', {'info_list': info_list})
 
 def v_user(request):
     info_list = {}
     info_list['title'] = "V用户"
-    info_list['url_base'] = url_base
     return render(request, 'v_user.html', {'info_list': info_list})
 
 
 def huimin_service(request):
     info_list = {}
     info_list['title'] = "惠民服务"
-    info_list['url_base'] = url_base
     return render(request, 'huimin_service.html', {'info_list': info_list})
 
 
 def certification(request):
     info_list = {}
     info_list['title'] = "实名认证"
-    info_list['url_base'] = url_base
     return render(request, 'certification.html', {'info_list': info_list})
 
 def certification_inputinfo(request):
     info_list = {}
     info_list['title'] = "认证信息填写"
-    info_list['url_base'] = url_base
     return render(request, 'certification_inputinfo.html', {'info_list': info_list})
 
 def information_search(request):
     info_list = {}
     info_list['title'] = "信息查询"
-    info_list['url_base'] = url_base
     return render(request, 'information_search.html', {'info_list': info_list})
 
 def jiaoguan12123(request):
     info_list = {}
     info_list['title'] = "交管12123"
-    info_list['url_base'] = url_base
     return render(request, 'jiaoguan12123.html', {'info_list': info_list})
 
 def woshihaosiji(request):
     info_list = {}
     info_list['title'] = "我是好司机"
-    info_list['url_base'] = url_base
     return render(request, 'woshihaosiji.html', {'info_list': info_list})
 
 token()
