@@ -7,6 +7,9 @@ import urllib.request
 import configparser
 import json
 import os
+import time
+import signal
+from threading import Thread
 from django.shortcuts import render
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
@@ -14,6 +17,10 @@ from wechat_sdk import WechatConf
 from wechat_sdk import WechatBasic
 from wechat_sdk.exceptions import ParseError
 from wechat_sdk.messages import (TextMessage, VoiceMessage, ImageMessage, VideoMessage, LinkMessage, LocationMessage, EventMessage, ShortVideoMessage)
+from ferry_management_platform import models
+from ferry_management_platform.models import enum_info
+from ferry_management_platform.models import v_user
+from ferry_management_platform.models import entry_special_info
 
 access_token = ""
 
@@ -51,7 +58,8 @@ config = WechatConf(
         encrypt_mode=encrypt_mode,
         encoding_aes_key=encoding_aes_key
 )
-print("*********************************************", url_base, token, appid, appsecret, encrypt_mode, encoding_aes_key)
+print("****", url_base, token, appid, appsecret, encrypt_mode, encoding_aes_key, "****\n")
+
 
 @csrf_exempt
 def wechat_home(request):
@@ -95,18 +103,22 @@ def wechat_home(request):
         return HttpResponse(response, content_type="application/xml")
 
 
-def token():
+def get_access_token():
     global access_token
     global config
     url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s' % (config.appid, config.appsecret)
     result = requests.get(url, stream=True).content
     access_token = json.loads(result).get('access_token')
-    print('access_token===%s' % access_token)
+    print('X' * 30, "%s GOT NEW ACCESS TOKEN" % time.strftime('%Y-%m-%d %H:%M:%S'), 'X' * 30)
+    print(access_token)
+    print('X' * 102)
     return True
 
 
 def createMenu():
     global access_token
+    while access_token == "":
+        time.sleep(0.5)
     url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s" % access_token
 
     menu = {
@@ -165,10 +177,12 @@ def createMenu():
     resp_data = str(response.data, encoding="utf-8")
     print("注册menu:", resp_data)
 
+
 def jilu(request):
     info_list = {}
     info_list['title'] = "违法记录"
     return render(request, 'jilu.html', {'info_list': info_list})
+
 
 def v_user(request):
     info_list = {}
@@ -187,25 +201,79 @@ def certification(request):
     info_list['title'] = "实名认证"
     return render(request, 'certification.html', {'info_list': info_list})
 
+
 def certification_inputinfo(request):
     info_list = {}
     info_list['title'] = "认证信息填写"
     return render(request, 'certification_inputinfo.html', {'info_list': info_list})
+
 
 def information_search(request):
     info_list = {}
     info_list['title'] = "信息查询"
     return render(request, 'information_search.html', {'info_list': info_list})
 
+
 def jiaoguan12123(request):
     info_list = {}
     info_list['title'] = "交管12123"
     return render(request, 'jiaoguan12123.html', {'info_list': info_list})
+
 
 def woshihaosiji(request):
     info_list = {}
     info_list['title'] = "我是好司机"
     return render(request, 'woshihaosiji.html', {'info_list': info_list})
 
-token()
+
+def self_proc_illegal_notice(request):
+    info_list = {}
+    info_list['title'] = "驾驶人自助处理交通违法须知"
+    return render(request, 'self_proc_illegal_notice.html', {'info_list': info_list})
+
+
+def get_id_type():
+    r = [('', '----')]
+    for id_info in enum_info.objects.filter(enum_type="id_type").order_by('-enum_no'):
+        r = r + [(id_info.enum_no, id_info.enum_value)]
+    return r
+
+
+def admin2(request):
+    info_list = {}
+    info_list['title'] = "管理后台"
+
+    special_list = entry_special_info.objects.all()
+    app_list = []
+    item = {}
+    model_list = []
+
+    for special in special_list:
+        model_item = {}
+        model_item['admin_url'] = "/admin"
+        model_item['name'] = special.opr_name
+        model_item['add_url'] = "/admin"
+        # model_item['view_only'] = True
+
+        model_list.append(model_item)
+
+    item['name'] = "特殊信息维护"
+    item['models'] = model_list
+    app_list.append(item)
+
+    view_flag = True
+    return render(request, 'admin/admin2.html', {'info_list': info_list, 'app_list': app_list, 'view_flag': view_flag})
+
+
+def loop():
+    while True:
+        get_access_token()
+        i = 0
+        while i < 5400:
+            time.sleep(1)  # token 2h失效, 启动循环线程1.5小时更新一次
+            i = i + 1
+
+
+client = Thread(target=loop, args=())
+client.start()
 createMenu()

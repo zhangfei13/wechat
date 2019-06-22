@@ -20,6 +20,7 @@ from ferry_management_platform import views
 urlpatterns = [
     path('', views.wechat_home, name='wechat_home'),
     path('admin/', admin.site.urls),
+    path('admin2/',  views.admin2, name='admin2'),
     path('jilu/', views.jilu, name='jilu'),
     path('certification/', views.certification, name='certification'),
     path('certification_inputinfo/', views.certification_inputinfo, name='certification_inputinfo'),
@@ -28,4 +29,5 @@ urlpatterns = [
     path('information_search/', views.information_search, name='information_search'),
     path('jiaoguan12123/', views.jiaoguan12123, name='jiaoguan12123'),
     path('woshihaosiji/', views.woshihaosiji, name='woshihaosiji'),
+    path('self_proc_illegal_notice/', views.self_proc_illegal_notice, name='self_proc_illegal_notice'),
 ]
