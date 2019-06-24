@@ -13,6 +13,7 @@ from threading import Thread
 from django.shortcuts import render
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 from wechat_sdk import WechatConf
 from wechat_sdk import WechatBasic
 from wechat_sdk.exceptions import ParseError
@@ -239,6 +240,7 @@ def get_id_type():
     return r
 
 
+@login_required(login_url='admin:login')
 def admin2(request):
     info_list = {}
     info_list['title'] = "管理后台"
@@ -262,7 +264,8 @@ def admin2(request):
     app_list.append(item)
 
     view_flag = True
-    return render(request, 'admin/admin2.html', {'info_list': info_list, 'app_list': app_list, 'view_flag': view_flag})
+    has_permission = True
+    return render(request, 'admin/admin2.html', {'info_list': info_list, 'app_list': app_list, 'view_flag': view_flag, 'has_permission': has_permission})
 
 
 def loop():

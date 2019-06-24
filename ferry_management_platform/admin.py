@@ -9,6 +9,24 @@ class v_userAdmin(admin.ModelAdmin):
     search_fields = ['name']
     list_filter = ['status']
 
+    # list_per_page设置每页显示多少条记录，默认是100条
+    # list_per_page = 50
+
+    # ordering设置默认排序字段，负号表示降序排序
+    # ordering = ('-status',)
+
+    # list_editable 设置默认可编辑字段，在列表里就可以编辑
+    # list_editable = ['name', 'phone']
+
+    # 设置哪些字段可以点击进入编辑界面
+    # list_display_links = ('user_id', 'wechat_no')
+
+    # 列表顶部，设置为False不在顶部显示，默认为True。
+    # actions_on_top = True
+
+    # 列表底部，设置为False不在底部显示，默认为False。
+    # actions_on_bottom = False
+
 
 class enum_infoAdmin(admin.ModelAdmin):
     list_display = ['enum_no', 'enum_type', 'enum_subtype', 'enum_value', 'desc']
