@@ -21,6 +21,7 @@ urlpatterns = [
     path('', views.wechat_home, name='wechat_home'),
     path('admin/', admin.site.urls),
     path('admin2/',  views.admin2, name='admin2'),
+    path('admin2/add_driving_exam_questions',  views.add_driving_exam_questions, name='add_driving_exam_questions'),
     path('jilu/', views.jilu, name='jilu'),
     path('certification/', views.certification, name='certification'),
     path('certification_inputinfo/', views.certification_inputinfo, name='certification_inputinfo'),

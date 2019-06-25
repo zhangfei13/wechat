@@ -8,7 +8,8 @@ import configparser
 import json
 import os
 import time
-import signal
+from managePlatform import settings
+from ferry_management_platform import forms
 from threading import Thread
 from django.shortcuts import render
 from django.http.response import HttpResponse, HttpResponseBadRequest
@@ -252,9 +253,9 @@ def admin2(request):
 
     for special in special_list:
         model_item = {}
-        model_item['admin_url'] = "/admin"
+        model_item['admin_url'] = "/admin2"
         model_item['name'] = special.opr_name
-        model_item['add_url'] = "/admin"
+        model_item['add_url'] = "/admin2/add_driving_exam_questions"
         # model_item['view_only'] = True
 
         model_list.append(model_item)
@@ -265,7 +266,28 @@ def admin2(request):
 
     view_flag = True
     has_permission = True
-    return render(request, 'admin/admin2.html', {'info_list': info_list, 'app_list': app_list, 'view_flag': view_flag, 'has_permission': has_permission})
+    return render(request, 'admin2/admin2.html', {'info_list': info_list, 'app_list': app_list, 'view_flag': view_flag, 'has_permission': has_permission})
+
+from django.core.files.base import ContentFile
+
+def add_driving_exam_questions(request):
+    submit_success = False
+    view_flag = True
+    has_permission = True
+    form_obj = forms.driving_exam_questions()
+    if request.method == "POST":
+        obj = request.FILES.get('file1', None)
+        if obj is not None:
+            f = open(os.path.join(settings.FERRY_MANAGEMENT_PLATFORM_DATA, obj.name), 'wb')
+            for chunk in obj.chunks():
+                f.write(chunk)
+            f.close()
+            submit_success = True
+
+            # 开始解析
+
+
+    return render(request, "admin2/add_driving_exam_questions.html", {'form_obj': form_obj, 'view_flag': view_flag, 'has_permission': has_permission, 'submit_success': submit_success})
 
 
 def loop():

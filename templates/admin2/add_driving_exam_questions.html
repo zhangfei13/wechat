@@ -1,0 +1,28 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<form action="add_driving_exam_questions" method="post" enctype="multipart/form-data" novalidate autocomplete="off">
+    {% csrf_token %}
+    <div>
+        <!--<label>{{ form_obj.file }}</label> -->
+        <input type="file" name="file1" />
+    </div>
+    <div>
+        <input type="submit" class="btn btn-success" value="驾考真题批量录入" style="margin-top:25px;" />
+    </div>
+    <div>
+        {% if submit_success %}
+            <label style="margin-top:10px;">驾考真题批量成功</label>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}
