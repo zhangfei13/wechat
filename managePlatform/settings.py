@@ -12,9 +12,9 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
-import djcelery
+# import djcelery
 
-djcelery.setup_loader()
+# djcelery.setup_loader()
 
 BROKER_HOST = "192.168.1.151"
 BROKER_PORT = "5672"
@@ -37,7 +37,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*', ]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -48,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ferry_management_platform.apps.FerryManagementPlatformConfig',
-    'djcelery',
+    # 'djcelery',
 ]
 
 MIDDLEWARE = [
@@ -94,10 +93,6 @@ DATABASES = {
         'PASSWORD': 'ferry',
         'HOST': '127.0.0.1',
         'PORT': '3306',
-    },
-    'sqlite3': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -134,7 +129,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -150,3 +145,5 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(BASE_DIR, 'static'),
 )
+
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'collected/static')

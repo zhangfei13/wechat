@@ -1,0 +1,141 @@
+/*default css*/
+*{
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+a{
+	text-decoration: none;
+}
+img{
+	border: 0;
+}
+body{
+	font-family: "Microsoft YaHei";
+	font-size: 12px;
+	background: #f0eff5;
+}
+.clearfix:after{
+	content: '';
+	clear: both;
+}
+.main{
+	padding: 0 15px;
+}
+select,input,textarea{
+	appearance: none;
+	-webkit-appearance: none;
+}
+/*default css end*/
+
+/*weui css modify*/
+.weui-uploader{
+	margin-top: 14px;
+}
+.weui-uploader__input-box .msg{
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	margin-left: -24px;
+	color: #666;
+	font-size: 12px;
+}
+/*weui css modify end*/
+
+/*home page css start*/
+.logo{
+	margin-top: 27px;
+	text-align: left;
+}
+.logo img{
+	display: block;
+	width: 82px;
+}
+
+.formbox{
+	position: relative;
+	overflow: hidden;
+	margin-top: 5px;
+}
+.myform{
+	position: relative;
+	overflow: hidden;
+}
+.myform .box{
+	padding: 10px 13px 6px 13px;
+	background: #fff;
+}
+.myform .form-head{
+	color: #000;
+	font-size: 14px;
+	font-weight: 600;
+}
+.myform .field{
+	margin-top: 8px;
+	border: 1px solid #dedede;
+	background: #f0eff5;
+	padding: 5px 10px 5px 12px;
+	position: relative;
+}
+.myform .field.car-category,.myform .field.message{
+	background: url(../../images/mvcar/cross.png) no-repeat 98% center #f0eff5;
+	background-size: 16px auto;
+}
+.myform .field:nth-child(1){
+	margin-top: 20px;
+}
+.myform .field select,.myform .field input{
+	width: 100%;
+	height: 14px;
+	line-height: 14px;
+	border: 0;
+	font-size: 12px;
+	outline: none;
+	background: none;
+	color: #333;
+}
+.myform .field.carnum input{
+	text-indent: 1.5em;
+}
+.myform .field.carnum span{
+	position: absolute;
+	left: 12px;
+	top: 4px;
+	color: #333;
+	font-weight: 600;
+}
+.myform .field input{
+	color: #333;
+}
+.myform .field input::-webkit-input-placeholder,.myform .field textarea::-webkit-input-placeholder{
+	color: #b9b9b9;
+}
+.myform .field input:-ms-input-placeholder,.myform .field textarea:-ms-input-placeholder{
+	color: #b9b9b9;
+}
+#submit-btn{
+	width: 100%;
+	height: 36px;
+	line-height: 36px;
+	text-align: center;
+	color: #fff;
+	font-size: 16px;
+	outline: none;
+	border: 0;
+	letter-spacing: 2px;
+	margin-top: 15px;
+	background: #0093e8;
+}
+
+.tips{
+	color: #666666;
+	line-height: 21px;
+	margin-top: 10px;
+	padding: 0 8px;
+}
+
+.footer-page{
+	text-align: center;
+	margin: 40px 0 108px 0;
+}
+/*home page css end*/

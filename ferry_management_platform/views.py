@@ -8,6 +8,7 @@ import configparser
 import json
 import os
 import time
+import datetime
 from managePlatform import settings
 from ferry_management_platform import forms
 from threading import Thread
@@ -23,6 +24,7 @@ from ferry_management_platform import models
 from ferry_management_platform.models import enum_info
 from ferry_management_platform.models import v_user
 from ferry_management_platform.models import entry_special_info
+from ferry_management_platform.models import wechat_access_token
 
 access_token = ""
 
@@ -114,7 +116,7 @@ def get_access_token():
     print('X' * 30, "%s GOT NEW ACCESS TOKEN" % time.strftime('%Y-%m-%d %H:%M:%S'), 'X' * 30)
     print(access_token)
     print('X' * 102)
-    return True
+    return access_token
 
 
 def createMenu():
@@ -180,6 +182,13 @@ def createMenu():
     print("注册menu:", resp_data)
 
 
+def delete_menu():
+    global access_token
+    url = "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s" % access_token
+    result = requests.get(url, stream=True).content
+    print('删除menu: ', json.loads(result))
+
+
 def jilu(request):
     info_list = {}
     info_list['title'] = "违法记录"
@@ -196,6 +205,12 @@ def huimin_service(request):
     info_list = {}
     info_list['title'] = "惠民服务"
     return render(request, 'huimin_service.html', {'info_list': info_list})
+
+
+def wechat_move(request):
+    info_list = {}
+    info_list['title'] = "微信挪车"
+    return render(request, 'wechatMove.html', {'info_list': info_list})
 
 
 def certification(request):
@@ -276,7 +291,7 @@ def add_driving_exam_questions(request):
     has_permission = True
     form_obj = forms.driving_exam_questions()
     if request.method == "POST":
-        obj = request.FILES.get('file1', None)
+        obj = request.FILES.get('file', None)
         if obj is not None:
             f = open(os.path.join(settings.FERRY_MANAGEMENT_PLATFORM_DATA, obj.name), 'wb')
             for chunk in obj.chunks():
@@ -286,19 +301,63 @@ def add_driving_exam_questions(request):
 
             # 开始解析
 
-
     return render(request, "admin2/add_driving_exam_questions.html", {'form_obj': form_obj, 'view_flag': view_flag, 'has_permission': has_permission, 'submit_success': submit_success})
 
 
 def loop():
-    while True:
+    global access_token
+    global url_base
+    first = True
+    url = None
+    loop_times = 5400  # token 2h失效, 启动循环线程1.5小时更新一次
+    token_object = wechat_access_token.objects.first()
+    curent_time = datetime.datetime.now()
+    if token_object is not None:
+        update_time = token_object.update_time
+        interval = curent_time - update_time
+        loop_times = loop_times - (interval.days * 24 * 3600 + interval.seconds)
+        if loop_times > 0:
+            access_token = token_object.access_token
+        if token_object.url != url_base:
+            token_object.url = url_base
+            token_object.save()
+        first = False
+    else:
+        loop_times = 0
+        first = True
+
+    if loop_times <= 0:
         get_access_token()
-        i = 0
-        while i < 5400:
-            time.sleep(1)  # token 2h失效, 启动循环线程1.5小时更新一次
-            i = i + 1
+        delete_menu()
+        createMenu()
+        loop_times = 0
+    print('loop_times:', loop_times)
+    while True:
+        for i in range(0, loop_times):
+            time.sleep(1)
+
+        loop_times = 5400
+        token_object = wechat_access_token.objects.first()
+        curent_time = datetime.datetime.now()
+        if token_object is not None:
+            update_time = token_object.update_time
+            interval = curent_time - update_time
+            loop_times = loop_times - (interval.days * 24 * 3600 + interval.seconds)
+            if loop_times > 0:
+                continue
+
+        token = get_access_token()
+        if first is True:
+            object = wechat_access_token()
+            object.access_token = token
+            object.update_time = datetime.datetime.now()
+            object.save()
+            first = False
+        else:
+            token_object.access_token = token
+            token_object.update_time = datetime.datetime.now()
+            token_object.save()
 
 
 client = Thread(target=loop, args=())
 client.start()
-createMenu()

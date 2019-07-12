@@ -3,6 +3,15 @@ from django.db import models
 # Create your models here.
 
 
+class wechat_access_token(models.Model):
+    access_token = models.CharField("access token", max_length=240, blank=False, null=False)
+    url = models.URLField('service url')
+    update_time = models.DateTimeField('更新时间')
+
+    class Meta:
+        db_table = "wechat_access_token"
+
+
 class enum_info(models.Model):
     enum_no = models.IntegerField("枚举编号")
     enum_type = models.CharField("枚举类型", max_length=50, blank=True, null=True)

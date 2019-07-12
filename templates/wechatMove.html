@@ -1,0 +1,681 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width,maximum-scale=1.0,user-scalable=no">
+
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+
+    <title>{{ info_list.title }}</title>
+    <link rel="stylesheet" href="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/weui.min.css">
+    <link rel="stylesheet" href="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/background.css">
+    <link rel="stylesheet" href="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/style.css">
+<!--    <script type="text/javascript" src='/assets/js/jquery-1.8.3.min.js'></script>-->
+    <script src="https://pingjs.qq.com/h5/stats.js?v2.0.2" name="MTAH5" sid="500596854"></script><script type="text/javascript" src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/zepto.min.js"></script>
+    <script src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/vue.js"></script>
+    <script type="text/javascript" src="https://whjjwx-1256139749.cos.ap-guangzhou.myqcloud.com/yanzheng_wx_1.js"></script>
+    <style>
+        .msgbox_wrap, .error_msg {
+            font-size: 14px;
+            color: #fff;
+            line-height: 34px;
+            background-color: #E64340;
+            text-align: center;
+            position: fixed;
+            -webkit-transform: translateZ(0);
+            width: 100%;
+            top: 0;
+            z-index: 9992;
+        }
+        body{font-size: 12px;font-family: "Microsoft Yahei", "微软雅黑", Arial, Tahoma;}
+    </style>
+    <style id="__WXWORK_INNER_SCROLLBAR_CSS">::-webkit-scrollbar { width: 12px !important; height: 12px !important; }::-webkit-scrollbar-track:vertical {  }::-webkit-scrollbar-thumb:vertical { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-scrollbar-track:horizontal {  }::-webkit-scrollbar-thumb:horizontal { background-color: rgba(136, 141, 152, 0.5) !important; border-radius: 10px !important; background-clip: content-box !important; border:2px solid transparent !important; } ::-webkit-resizer { display: none !important; }</style><script>
+        function showTips(text, time) {
+            if(arguments.length < 1) {
+                alert('请填写提示');
+                return;
+            }
+
+            var text = text,
+                time = time;
+
+            var wrap_div = '<div class="myTips" id="myTips" style="position: fixed;top: 0; left: 0;width: 100%;height: 100%;z-index: 10000;"><div style="position: absolute;padding: 20px;background: rgba(0, 0, 0, 0.7);position: absolute; left:50%; top:50%; -webkit-transform:translate(-50%,-50%); transform:translate(-50%,-50%);font-size: 18px;border-radius: 10px;color:#fff;opacity: 0.9;">'+ text +'</div>';
+
+
+            if($('.myTips').length > 0) {
+                $('.myTips').find('div').text(text);
+            } else {
+                $("body").append(wrap_div);
+            }
+
+            if(time != undefined && time) {
+                $("#myTips").fadeIn(100);
+                setTimeout(function() {
+                    $("#myTips").hide();
+                }, time);
+            }
+
+        }
+        function showmsg(neirong)
+        {
+            if (neirong == '')
+            {
+                return false;
+            }
+            $("#error_msg").html(neirong);
+            $("#error_msg").addClass("error_msg");
+            curCount = count;
+            InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一
+        }
+        function showLoading(msg,time){
+            var $loadingToast = $('#loadingToast');
+            $loadingToast.fadeIn(100);
+            $(".weui-toast__content").html(msg);
+            if(time>0){
+                setTimeout(function () {
+                    $loadingToast.fadeOut(100);
+                }, time);
+            }
+        }
+        function hideLoading(){
+            var $loadingToast = $('#loadingToast');
+            $loadingToast.fadeOut(100);
+        }
+
+        function showToast(msg,time){
+            var $toast = $('#toast');
+            if ($toast.css('display') != 'none') return;
+            $toast.fadeIn(100);
+            $("#toastMsg").html(msg);
+            if(time>0){
+                setTimeout(function () {
+                    $toast.fadeOut(100);
+                }, time);
+            }
+        }
+
+        function hideToast(){
+            var $toast = $('#toast');
+            $toast.fadeOut(100);
+        }
+
+    </script>
+
+</head>
+<body>
+
+{% load static %}
+<div class="msgbox_wrap unhappy_error" id="error_msg"></div>
+
+
+<!--BEGIN_loadingToast-->
+    <div id="loadingToast" style="z-index: 999999; opacity: 0; display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast" style="z-index:999999;">
+            <i class="weui-loading weui-icon_toast"></i>
+            <p class="weui-toast__content">定位中</p>
+        </div>
+    </div>
+<!--END loadingToast-->
+
+<!--BEGIN toast-->
+    <div id="toast" style="opacity: 0; display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+            <p id="toastMsg" class="weui-toast__content">定位中</p>
+        </div>
+    </div>
+<!--END toast-->
+
+<script type="text/javascript">
+    subBusy = 1;
+    function ajaxnew(url,data,loadingMsg,successMsg,errorMsg,call){
+        if(subBusy == 2){
+            return false;
+        }
+        subBusy = 2;
+        if(loadingMsg !=''){
+            showLoading(loadingMsg);
+        }
+
+        $.ajax({
+            url:url,
+            type:'post',
+            data:data,
+            dataType:'json',
+            success:function(data){
+                subBusy = 1;
+                hideLoading();
+                if(data.code == 0){
+                    if(successMsg != ''){
+                        showToast(successMsg,2000);
+                    }
+                    if(typeof (call) == 'function'){
+                        call(data.data);
+                        return false;
+                    }
+
+                    try {
+                        if(typeof(data.data.url) != 'undefined'){
+                            location.replace(data.data.url);
+                            return false;
+                        }
+                    }catch (e){
+
+                    }
+
+
+
+                }else {
+                    if(errorMsg != ''){
+                        showmsg(errorMsg);
+                    }else if(typeof (data.msg) != 'undefined'){
+                        showmsg(data.msg);
+                    }
+                }
+            },
+            error:function(e1,e2,e3){
+                subBusy = 1;
+                hideLoading();
+                if(e1.status == 400){
+                    showmsg('您已提交，请勿重复提交');
+                }else {
+                    if(errorMsg != ''){
+                        showmsg(errorMsg);
+                    }
+                }
+            }
+        });
+    }
+
+
+    function ajax(url, data, successFunc, useLoading)
+    {
+        if(subBusy == 2){
+            return false;
+        }
+        subBusy = 2;
+
+        useLoading = (typeof(useLoading)=='undefined') ? true : useLoading;
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: data,
+            timeout: 10000,
+            dataType: "json",
+            success: function (data) {
+                hideLoading();
+                if (data.code == 1)
+                {
+//					showToast('成功',3000);
+                    successFunc(data);
+                }
+                else
+                {
+                    subBusy = 1;
+                    showmsg(data.message);
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                subBusy = 1;
+                hideLoading();
+                showmsg("请求出错,请重试");
+                // alert(XMLHttpRequest.status);
+                // alert(XMLHttpRequest.readyState);
+                // alert(textStatus);
+            },
+            complete:  function (XMLHttpRequest, status) {
+                subBusy = 1;
+                hideLoading();
+                if(status=='timeout'){
+                    showmsg("请求超时,请检测网络");
+                }
+                hideLoading(useLoading);
+            },
+        });
+    }
+</script>
+
+<div class="main">
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script><script>wx.config({debug: false,
+                appId: "wx65593d3507144456",
+                timestamp:"1561509463",
+                nonceStr:"07537c6417f71ad20090e321c41a1c",
+                signature:"3b2604de4141c06783b8ec749eefaf87f0aa15ed",
+                jsApiList: ["onMenuShareTimeline","onMenuShareAppMessage","hideOptionMenu","showOptionMenu","hideMenuItems","showMenuItems","hideAllNonBaseMenuItem","showAllNonBaseMenuItem","closeWindow","getLocation","startRecord","stopRecord","onVoiceRecordEnd","uploadVoice","playVoice","pauseVoice","stopVoice","getLocation","chooseImage","uploadImage"]
+            });</script>
+<link rel="stylesheet" type="text/css" href="{% static "css/mvcar/mvcarstyle.css"%}">
+
+    <!-- logo block -->
+    <div class="logo">
+        <img src="{% static "img/nuoche_logo.png"%}">
+    </div>
+    <!-- logo end -->
+
+    <!-- form fieldset -->
+    <div class="formbox">
+        <form class="myform" id="myform" action="javascript:return true;">
+            <div class="box">
+
+                <div class="form-head">
+                    <span>挪车信息</span>
+                </div>
+
+                <div class="field car-category">
+                    <select placeholder="请选择设施分类" name="car">
+                                                <option value="02">小型汽车</option>
+                                            </select>
+                </div>
+
+                <div class="field carnum">
+                    <span>鄂</span>
+                    <input id="hphm" type="text" name="carnum" placeholder="请输入车牌号" style="text-transform:Uppercase;" maxlength="7">
+                </div>
+
+                <div class="field position">
+                    <input id="ztjd" type="text" name="position" placeholder="GPS正在获取您的地理位置" disabled="disabled">
+                </div>
+
+                <div class="field message">
+                    <select placeholder="给车主捎句悄悄话吧！" name="message" id="message">
+                        <option value="" disabled="" selected="" style="display: none;">给车主捎句悄悄话吧！</option>
+                        <option value="你的车窗未关~">你的车窗未关~</option>
+                        <option value="你的车灯未关~">你的车灯未关~</option>
+                        <option value="人家要开车车出去吃饭了，饿死本宝宝啦">人家要开车车出去吃饭了，饿死本宝宝啦！</option>
+                        <option value="雪花飘飘~北风萧萧~我在~等你~归来~">雪花飘飘~北风萧萧~我在~等你~归来~</option>
+                        <option value="在哪里~你到底在哪里~我在挪车的地方等着你">在哪里~你到底在哪里~我在挪车的地方等着你</option>
+                        <option value="大哥大姐，行行好，求求你放我出去嘛！">大哥大姐，行行好，求求你放我出去嘛！</option>
+                        <option value="我等到花儿都谢了，海儿都哭了~">我等到花儿都谢了，海儿都哭了~</option>
+                        <option value="大冬天在外面喝风的滋味真不好受，好心人快来救我~">大冬天在外面喝风的滋味真不好受，好心人快来救我~</option>
+
+                    </select>
+                </div>
+
+                <div class="weui-cells weui-cells_form">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <div class="weui-uploader">
+                                <div class="weui-uploader__hd">
+                                    <p class="weui-uploader__title"></p>
+                                    <!--                    <div class="weui-uploader__info">0/3</div>-->
+                                </div>
+
+                                <div class="img_content clearfix">
+                                    <div id="img_box">
+<!--                                        <div style="border:solid 1px;width: 30%;height: 140px;float: left;margin-right: 5px;" class="i"></div>-->
+<!--                                        <div style="border:solid 1px;width: 30%;height: 140px;float: left;margin-right: 5px;" class="i"><img class="img" alt="" dataindex='+index+' width="100%" id="img'+index+'"></div>-->
+                                        <div id="uploaderInput" class="i" style="display:inline;">
+                                            <div class="weui-uploader__input-box" width="100%" height="88"></div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="form-head" style="margin-top: 28px;">
+                    <span>您的信息</span>
+                </div>
+
+                <div class="field tel">
+                    <input type="tel" name="tel" placeholder="请输入您的手机号码" maxlength="11" id="sjhm">
+                </div>
+
+            </div>
+            <input type="submit" name="submit" value="提交" id="submit-btn">
+
+        </form>
+
+    </div>
+    <!-- form fieldset end -->
+
+    <!-- warning tips -->
+    <div class="tips">
+        <p>注意事项：</p>
+        <p>1、目前仅限手机用户、仅限武汉市籍（鄂A）车辆</p>
+        <p>2、来去电号码均显示116114，不会泄露您的隐私</p>
+        <p>3、车主信息来源武汉交管局</p>
+    </div>
+    <!-- warning tips end -->
+
+    <script type="text/javascript" src="{% static "js/mvcar/mvcar.js"%}"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        //获取地理位置开始
+        window.district = '';
+        window.imgflag = false;
+        var time = 20;
+        showLoading('定位中');
+        timer = setInterval(function() {
+            if (time<0){
+                $("#ztjd").val("自动获取您的位置失败，请检查手机GPS功能是否开启");
+                clearInterval(timer);
+                hideLoading();
+            }
+            if (window.district != ''){
+                clearInterval(timer);
+                $("#ztjd").val(window.Label);
+                window.imgflag = true;
+                hideLoading();
+            }
+            time--;
+        },1000);
+        //获取地理位置结束
+
+        //        图片处理开始
+        var maxnum = 3;
+        $("#uploaderInput").on('click',function(){
+            if (window.imgflag==false){
+                return false;
+            }
+            index = 1;
+            $(".img").each(function(){
+                var src = $(this).attr("src");
+                if(src){
+                    index = index+1;
+                }
+            });
+            var html = '<div style="display:none;border:solid 1px;width: 30%;height: 77px;float: left;margin-right: 5px;" class="i"><img class="img" alt="" dataindex='+index+' width="100%" height="77px" id="img'+index+'"></div>';
+            $(this).before(html);
+            var obj = $(this).prev().children("img");
+            chooseImage(obj,maxnum);
+        });
+        //        图片处理结束
+
+        var  busy = 0;
+        $('#submit-btn').click(function(){
+            if(busy==1){
+                return false;
+            }
+            if(window.district == ''){
+                showmsg('获取位置信息失败，请刷新页面重试！');
+                return false;
+            }
+
+
+            var msg = "";
+            msg = yanzheng.yanzheng_ChePaiHao($.trim($("#hphm").val()));
+            if(msg!=yanzheng.OK){
+                showmsg(msg);
+                return false;
+            }
+
+
+            var hphm = $.trim($("#hphm").val());
+            var sjhm = $.trim($("#sjhm").val());
+
+            var message = $("#message").val();
+
+            if(message == '给车主捎句悄悄话吧！'){
+                showmsg('给车主捎句悄悄话吧！');
+                return false;
+            }
+
+
+            var num = 0;
+            $(".img").each(function(){
+                var src = $(this).attr("src");
+                if(src){
+                    num = num+1;
+                }
+            });
+
+            msg = "请至少上传一张图片";
+            if(num==0){
+                showmsg(msg);
+                return false;
+            }
+
+            msg = yanzheng.yanzheng_Mobile_nokong($.trim($("#sjhm").val()));
+            if(msg!=yanzheng.OK){
+                showmsg(msg);
+                return false;
+            }
+
+
+            var	postJson = {};
+            $(".img").each(function(){
+                var data = $(this).attr("dataindex");
+                var serviceId = $(this).attr("serviceId");
+                if(data&&serviceId){
+                    postJson['img'+data] = serviceId;
+                }
+            });
+            postJson['imgNum'] = num;
+            postJson['hphm'] = hphm;
+
+            postJson['sjhm'] = sjhm;
+
+            postJson['lon'] = window.longitude;
+            postJson['lat'] = window.latitude;
+            postJson['address'] = window.Label;
+            postJson['message'] = message;
+            postJson['MOD_CSRF_TOKEN'] = '4f927b7bb14e5d67ff7d4dbf3dfe28978da77305';
+            showLoading("正在处理...");
+
+            busy = 1;
+            $.ajax({
+                url:"/luo/AjaxNuoSearch?",
+                type:"post",
+                data:postJson,
+                dataType:"json",
+                success: function (data) {
+                    busy = 0;
+                    hideLoading();
+                    if (data.errcode == 1000) {
+                        showToast("提交成功", 2000);
+                        location.replace('/luo/success');
+                    }else {
+                        showTips(data.errmsg, 2000);
+                    }
+                },
+                error:function(e1,e2,e3){
+                    hideLoading();
+                    busy = 0;
+                    showTips("请求超时,请检测网络", 2000);
+                }
+            });
+        });
+
+
+    })
+</script>
+</div>
+
+<script>
+    var _mtac = {};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "https://pingjs.qq.com/h5/stats.js?v2.0.2";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500596854");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<style type="text/css">
+    .bottom{ width:100%;margin:20px auto 30px;clear:both; z-index: -100;}
+    .my_foot20 {
+        color: #b7b7b7;
+        text-align: center;
+        height: 60px;
+        line-height: 20px;
+        padding:5px 0px 15px 0px;
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+
+    .my_foot20 a {
+        color: #b7b7b7;
+    }
+
+    .foot20 {
+        width: 240px;
+        height: 38px;
+        background: url(https://f.seals.qq.com/filestore/10019/c5/b3/2e/1000/file/UET0U73uBz_6952212.png) no-repeat center center;
+        background-size: 100% 100%;
+        margin:20px auto 0;
+    }
+
+    .foot20 p {
+        color: #b7b7b7;
+        text-align:  center;
+        height:      24px;
+        line-height: 24px;
+    }
+
+
+</style>
+<div class="bottom" style="font-size: 12px;">
+    <br>
+<!--    <div class="foot20 footer-page"></div>-->
+    <div style="text-align: center;color: #666666">Copyright © 2013-2019 武汉市公安局交通管理局 版权所有</div>
+    <div style="text-align: center;color: #666666">湖北腾牛文化传播有限公司 产品支持</div>
+</div>
+<!--
+<script type="text/javascript">
+    var footer = $("div.bottom");
+    $(function () {
+        lrFixFooter();
+    })
+    function lrFixFooter() {
+        fixFooter();
+        $(window).on('resize.footer', function () {
+            fixFooter();
+        });
+        $(window).on('scroll.footer', function () {
+            fixFooter();
+        });
+    }
+    function fixFooter() {
+        var cheight = $(document.body).height() - 4;
+        if ($(footer).css("position") == "absolute") {
+            cheight = $(document.body).height() - 4 + $(footer).height();
+        }
+        if (cheight <= $(window).height()) {
+            footer.css({
+                width: "100%",
+                position: "absolute",
+                left: 0,
+                bottom: 0
+            });
+        } else {
+            footer.css({
+                position: "static"
+            });
+        }
+    }
+</script>  -->
+<script type="text/javascript">
+	wx.ready(function(){
+		wx.getLocation({
+		            timestamp: "", // 位置签名时间戳，仅当需要兼容6.0.2版本之前时提供
+		            nonceStr: "", // 位置签名随机串，仅当需要兼容6.0.2版本之前时提供
+		            addrSign: "", // 位置签名，仅当需要兼容6.0.2版本之前时提供，详见附录4
+		            success: function(res) {
+		            getDistrict(res.longitude, res.latitude);
+		        },
+		        fail: function(res) {
+					showTips("定位失败，请点击自动定位",2000);
+					console.log(res);
+//		            if (navigator.geolocation) {
+//		                navigator.geolocation.getCurrentPosition(success_handler, error_handler);
+//		            } else {
+//		               showTips('该设备无法自动定位，请手动选择您所在位置',2000);
+//		            }
+		        }
+		    });
+		});
+
+	function writeObj(obj){
+		var description = "";
+		for(var i in obj){
+			var property=obj[i];
+			description+=i+" = "+property+"\n";
+		}
+		alert(description);
+	}
+
+
+	function getDistrict(longitude,latitude)
+	{
+	    $.post("/gps/index?", { longitude:longitude,latitude:latitude,MOD_CSRF_TOKEN:'4f927b7bb14e5d67ff7d4dbf3dfe28978da77305'},
+	        function(data){
+				console.log(data);
+	            if(data.state=='success')
+	            {
+	            		               	window.longitude = data.location.Location_Y;
+	        		window.latitude = data.location.Location_X;
+	        			        		window.district = data.location.District;
+	        		window.Label = data.location.Label;
+	            }
+	            else
+	            {
+		            showTips('该设备无法自动定位，请手动选择您所在位置',2000);
+	            }
+	        }, "json");
+	}
+</script><script type="text/javascript">
+	function chooseImage(obj,maxnum){
+		wx.chooseImage({
+		    count: 1, // 默认9
+		    sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+		    sourceType: ['camera','album'], // 可以指定来源是相册还是相机，默认二者都有
+		    success: function (res) {
+		        var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+		        var local_Id = res.localIds[0];
+		        obj.attr("src",local_Id);
+ 	          	 setTimeout(function() {
+	   	          	  uploadImage(obj,local_Id);
+	                  }, 100);
+				if(maxnum!=undefined){
+					var num = 0;
+					$(".img").each(function(){
+						var src = $(this).attr("src");
+						if(src){
+							num = num+1;
+						}
+					});
+					if (num>=maxnum){
+						obj.parent().next().css("display","none");
+					}
+					obj.parent().css("display","inline");
+				}
+		    },
+			fail: function(res){
+				writeObj(res);
+			}
+		});
+	}
+
+	function writeObj(obj){
+		var description = "";
+		for(var i in obj){
+			var property=obj[i];
+			description+=i+" = "+property+"\n";
+		}
+		alert(description);
+	}
+
+	function uploadImage(obj,local_Id){
+ 		wx.uploadImage({
+   	  		localId: local_Id,
+   	  		isShowProgressTips:1,
+   	  		success : function(res){
+   	  			obj.attr("serviceId",res.serverId);
+   		     }
+ 		});
+	}
+
+</script>
+
+
+
+
+<div class="myTips" id="myTips" style="position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 10000; opacity: 1; display: none;"><div style="position: absolute;padding: 20px;background: rgba(0, 0, 0, 0.7);position: absolute; left:50%; top:50%; -webkit-transform:translate(-50%,-50%); transform:translate(-50%,-50%);font-size: 18px;border-radius: 10px;color:#fff;opacity: 0.9;">定位失败，请点击自动定位</div></div></body></html>

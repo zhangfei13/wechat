@@ -31,4 +31,5 @@ urlpatterns = [
     path('jiaoguan12123/', views.jiaoguan12123, name='jiaoguan12123'),
     path('woshihaosiji/', views.woshihaosiji, name='woshihaosiji'),
     path('self_proc_illegal_notice/', views.self_proc_illegal_notice, name='self_proc_illegal_notice'),
+    path('wechat_move/', views.wechat_move, name='wechat_move'),
 ]
